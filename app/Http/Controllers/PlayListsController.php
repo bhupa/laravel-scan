@@ -23,7 +23,7 @@ class PlayListsController extends BaseController
     }
     public function index()
     {
-        $playlists = $this->play->orderBy('created_at','desc')->get();
+        $playlists = $this->play->where('created_by',auth()->id())->orderBy('created_at','desc')->get();
         return $this->success([
             'message' => 'Play Lists',
             'data' =>  PlayListsResource::collection( $playlists)
