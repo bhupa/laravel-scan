@@ -1,11 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Playlists;
+namespace App\Http\Requests\Event;
 
-use App\Http\Requests\CustomFormRequest;
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreRequest extends CustomFormRequest
+class EventUpdateRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -14,7 +13,7 @@ class StoreRequest extends CustomFormRequest
      */
     public function authorize()
     {
-        return true;
+        return false;
     }
 
     /**
@@ -24,11 +23,8 @@ class StoreRequest extends CustomFormRequest
      */
     public function rules()
     {
-        
         return [
-            'name'=>'required|unique:playlists,name',
-            'status'=>'required|boolean'
+            //
         ];
-        
     }
 }

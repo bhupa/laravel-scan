@@ -4,7 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class PlayListsResource extends JsonResource
+class EventResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -17,10 +17,11 @@ class PlayListsResource extends JsonResource
         return [
             'id'=>$this->id,
             'name'=>$this->name,
-            'status'=>$this->status,
-            'created_by'=>$this->created_by ? $this->author : Null,
+            'longitude'=>$this->longitude,
+            'latitude'=>$this->latitude,
+            'event_date'=>$this->event_date,
             'created_at'=>$this->created_at,
-            'song'=> $this->songs
+            'playlists'=>$this->playlists
         ];
     }
 }

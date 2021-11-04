@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreatePlaylistsTable extends Migration
+class CreateEventPlaylistsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,10 @@ class CreatePlaylistsTable extends Migration
      */
     public function up()
     {
-        Schema::create('playlists', function (Blueprint $table) {
+        Schema::create('event_playlists', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->boolean('status')->default(0);
-            $table->foreignId('created_by')->on('users')->onDelete('cascade');
+            $table->foreignId('playlist_id')->on('playlists')->onDelete('cascade');
+            $table->foreignId('event_id')->on('events')->onDelete('cascade');
             $table->timestamps();
         });
     }
@@ -29,6 +28,6 @@ class CreatePlaylistsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('playlists');
+        Schema::dropIfExists('event_playlists');
     }
 }

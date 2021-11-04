@@ -2,31 +2,31 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\Playlists\StoreRequest;
-use App\Http\Requests\Playlists\UpdateRequest;
-use App\Http\Resources\PlayListsResource;
-use App\Models\PlayLists;
+use App\Http\Requests\Event\EventStoreRequest;
+use App\Http\Resources\EventResource;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
-use App\Repositories\PlayListsRepository;
+use App\Repositories\EventRepository;
+use App\Models\Event;
 
-class PlayListsController extends BaseController
+class EventController extends BaseController
 {
+
+    public function __construct(EventRepository $event)
+    {
+        $this->event = $event;
+    }
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function __construct(PlayListsRepository $play)
-    {
-        $this->play =  $play;
-    }
     public function index()
     {
-        $playlists = $this->play->where('created_by',auth()->id())->orderBy('created_at','desc')->get();
+        $event = $this->event->orderBy('event_date','asc')->get();
+        $events = EventResource::collection( $event );
         return $this->success([
-            'message' => 'Play Lists',
-            'data' =>  PlayListsResource::collection( $playlists)
+            'message' => 'Event Lists',
+            'data' => $events
         ]);
     }
 
@@ -46,17 +46,16 @@ class PlayListsController extends BaseController
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(StoreRequest $request)
+    public function store(EventStoreRequest $request)
     {
-        $data = $request->except('_token');
-
+        
+        $data = $request->except('_token','playlist_id');
         $data['created_by'] = auth()->Id();
-        $data['status'] = $request->status ? 1:0;
-     
-        if($play = $this->play->create($data)){
+        if($event = $this->event->create($data)){
+            $event->playlists()->sync($request->playlist_id);
             return $this->success([
-                'message' => 'Play Lists added Successfully ',
-                'data' => new PlayListsResource($play)
+                'message' => 'Event added Successfully ',
+                'data' => new EventResource($event)
             ]);
          }
 
@@ -92,17 +91,15 @@ class PlayListsController extends BaseController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateRequest $request, $id)
+    public function update(Request $request, Event $event)
     {
-        $data = $request->except('_token');
+        $data = $request->except('_token','playlist_id');
         $data['created_by'] = auth()->Id();
-        $data['status'] = $request->status ? 1:0;
-     
-        $play = $this->play->find($id);
-        if($play->update($data)){
+        if($event->update($data)){
+            $event->playlists()->sync($request->playlist_id);
             return $this->success([
-                'message' => 'Play Lists update Successfully ',
-                'data' => new PlayListsResource($play)
+                'message' => 'Event Update Successfully ',
+                'data' => new EventResource($event)
             ]);
          }
 
@@ -115,14 +112,13 @@ class PlayListsController extends BaseController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Event $event)
     {
-  
-        $play = $this->play->find($id);
-        $play->delete();
+        $event->playlists()->detach();
+        $event->delete();
         return $this->success([
-            'message' => 'Play Lists delete Successfully ',
-            
+            'message' => 'Song deleted Successfully ',
+            'data' => new EventResource($event)
         ]);
     }
 }

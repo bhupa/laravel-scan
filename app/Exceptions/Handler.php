@@ -66,7 +66,7 @@ class Handler extends ExceptionHandler
         if (empty($message)) {
             $message = __('server.error');
         }
-
+       
        
         return response()->json(['success' => false, 'message' => $message], 500);
     }

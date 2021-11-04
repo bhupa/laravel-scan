@@ -23,7 +23,6 @@ class AuthController extends BaseController
     
       $data['password'] =bcrypt($request->password);
 
- 
 
       if($user = $this->user->create($data)){
        
@@ -32,7 +31,7 @@ class AuthController extends BaseController
        
         return $this->success([
             'message' => 'User Register Successfully ',
-            'accessToken' => $token,
+            //'accessToken' => $token,
             'data' => new UserResource($user)
         ]);
       }
@@ -45,12 +44,16 @@ class AuthController extends BaseController
        if (!Auth::attempt($data)) {
         return $this->error('Credentials not match', 401);
     }
-       
-
         return $this->success([
             'token' => auth()->user()->createToken('API Token')->plainTextToken,
             'user'=>auth()->user(),
             'message'=>'Login Successfull'
         ]);
+    }
+    public function logout(Request $request)
+    {
+      
+        auth()->user()->currentAccessToken()->delete();
+        return $this->success('User Logout Successfully');
     }
 }

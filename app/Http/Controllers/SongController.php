@@ -2,32 +2,28 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\Playlists\StoreRequest;
-use App\Http\Requests\Playlists\UpdateRequest;
-use App\Http\Resources\PlayListsResource;
-use App\Models\PlayLists;
+use App\Http\Requests\Song\SongStoreRequest;
+use App\Http\Requests\Song\SongUpdateRequest;
+use App\Http\Resources\SongResource;
+use App\Models\Song;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
-use App\Repositories\PlayListsRepository;
+use App\Repositories\SongRepository;
 
-class PlayListsController extends BaseController
+class SongController extends BaseController
 {
+
+    public function __construct(SongRepository $song)
+    {
+        $this->song = $song;
+    }
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function __construct(PlayListsRepository $play)
-    {
-        $this->play =  $play;
-    }
     public function index()
     {
-        $playlists = $this->play->where('created_by',auth()->id())->orderBy('created_at','desc')->get();
-        return $this->success([
-            'message' => 'Play Lists',
-            'data' =>  PlayListsResource::collection( $playlists)
-        ]);
+        //
     }
 
     /**
@@ -46,17 +42,13 @@ class PlayListsController extends BaseController
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(StoreRequest $request)
+    public function store(SongStoreRequest $request)
     {
         $data = $request->except('_token');
-
-        $data['created_by'] = auth()->Id();
-        $data['status'] = $request->status ? 1:0;
-     
-        if($play = $this->play->create($data)){
+        if($song = $this->song->create($data)){
             return $this->success([
-                'message' => 'Play Lists added Successfully ',
-                'data' => new PlayListsResource($play)
+                'message' => 'Song added Successfully ',
+                'data' => new SongResource($song)
             ]);
          }
 
@@ -92,17 +84,14 @@ class PlayListsController extends BaseController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateRequest $request, $id)
+    public function update(SongUpdateRequest $request, Song $song)
     {
+        
         $data = $request->except('_token');
-        $data['created_by'] = auth()->Id();
-        $data['status'] = $request->status ? 1:0;
-     
-        $play = $this->play->find($id);
-        if($play->update($data)){
+        if($song->update($data)){
             return $this->success([
-                'message' => 'Play Lists update Successfully ',
-                'data' => new PlayListsResource($play)
+                'message' => 'Song update Successfully ',
+                'data' => new SongResource($song)
             ]);
          }
 
@@ -115,14 +104,12 @@ class PlayListsController extends BaseController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Song $song)
     {
-  
-        $play = $this->play->find($id);
-        $play->delete();
-        return $this->success([
-            'message' => 'Play Lists delete Successfully ',
-            
-        ]);
+        $song->delete();
+            return $this->success([
+                'message' => 'Song deleted Successfully ',
+                'data' => new SongResource($song)
+            ]);
     }
 }

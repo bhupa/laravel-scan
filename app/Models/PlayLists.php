@@ -12,14 +12,16 @@ class PlayLists extends Model
     protected $table='playlists';
 
     protected $fillable=[
-        'title',
-        'value',
-        'type',
+        'name',
         'created_by',
         'status'
     ];
 
     public function author(){
         return $this->belongsTo(User::class,'created_by');
+    }
+
+    public function songs(){
+        return $this->hasMany(Song::class,'playlist_id');
     }
 }
