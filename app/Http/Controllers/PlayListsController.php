@@ -24,10 +24,8 @@ class PlayListsController extends BaseController
     public function index()
     {
         $playlists = $this->play->where('created_by',auth()->id())->orderBy('created_at','desc')->get();
-        return $this->success([
-            'message' => 'Play Lists',
-            'data' =>  PlayListsResource::collection( $playlists)
-        ]);
+        $output = PlayListsResource::collection( $playlists);
+        return $this->success($output, 'PlayLists Lists');
     }
 
     /**
@@ -48,16 +46,16 @@ class PlayListsController extends BaseController
      */
     public function store(StoreRequest $request)
     {
+       
         $data = $request->except('_token');
 
         $data['created_by'] = auth()->Id();
         $data['status'] = $request->status ? 1:0;
      
         if($play = $this->play->create($data)){
-            return $this->success([
-                'message' => 'Play Lists added Successfully ',
-                'data' => new PlayListsResource($play)
-            ]);
+           
+            $output = new PlayListsResource($play);
+            return $this->success( $output, 'Play Lists added Successfully');
          }
 
          return $this->error('Opps Something went wrong pls check the form ');
@@ -100,10 +98,8 @@ class PlayListsController extends BaseController
      
         $play = $this->play->find($id);
         if($play->update($data)){
-            return $this->success([
-                'message' => 'Play Lists update Successfully ',
-                'data' => new PlayListsResource($play)
-            ]);
+            $output = new PlayListsResource($play);
+            return $this->success($output,'Play Lists update Successfully ');
          }
 
          return $this->error('Opps Something went wrong pls check the form ');
@@ -120,9 +116,6 @@ class PlayListsController extends BaseController
   
         $play = $this->play->find($id);
         $play->delete();
-        return $this->success([
-            'message' => 'Play Lists delete Successfully ',
-            
-        ]);
+        return $this->success('Play Lists delete Successfully');
     }
 }

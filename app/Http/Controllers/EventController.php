@@ -24,10 +24,7 @@ class EventController extends BaseController
     {
         $event = $this->event->orderBy('event_date','asc')->get();
         $events = EventResource::collection( $event );
-        return $this->success([
-            'message' => 'Event Lists',
-            'data' => $events
-        ]);
+        return $this->success($events, 'Event Lists');
     }
 
     /**
@@ -53,10 +50,10 @@ class EventController extends BaseController
         $data['created_by'] = auth()->Id();
         if($event = $this->event->create($data)){
             $event->playlists()->sync($request->playlist_id);
-            return $this->success([
-                'message' => 'Event added Successfully ',
-                'data' => new EventResource($event)
-            ]);
+          
+           
+            $output = new  EventResource($event);
+            return $this->success( $output, 'Event added Successfully ');
          }
 
          return $this->error('Opps Something went wrong pls check the form ');
@@ -97,10 +94,8 @@ class EventController extends BaseController
         $data['created_by'] = auth()->Id();
         if($event->update($data)){
             $event->playlists()->sync($request->playlist_id);
-            return $this->success([
-                'message' => 'Event Update Successfully ',
-                'data' => new EventResource($event)
-            ]);
+            $output = new  EventResource( $event );
+            return $this->success( $output, 'Event Update Successfully ');
          }
 
          return $this->error('Opps Something went wrong pls check the form ');
@@ -116,9 +111,7 @@ class EventController extends BaseController
     {
         $event->playlists()->detach();
         $event->delete();
-        return $this->success([
-            'message' => 'Song deleted Successfully ',
-            'data' => new EventResource($event)
-        ]);
+        $output = new  EventResource( $event );
+        return $this->success($output, 'Song deleted Successfully ');
     }
 }

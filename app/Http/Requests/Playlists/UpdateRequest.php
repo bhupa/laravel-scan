@@ -24,18 +24,10 @@ class UpdateRequest extends CustomFormRequest
      */
     public function rules()
     {
-        if($this->type == 'file'){
         return [
-            'title'=>'required|unique:playlists,title,'.$this->id,
-            'type'=>'required|in:file,link',
-            'value'=>'required|file'
+            'name'=>'required|unique:playlists,name,'.$this->id,
+            'status'=>'required|boolean'
         ];
-        }else{
-            return [
-                'title'=>'required|unique:playlists,title,'.$this->id,
-                'type'=>'required|in:file,link',
-                'value'=>'required|url'
-            ];  
-        }
+        
     }
 }

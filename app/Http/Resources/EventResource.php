@@ -19,9 +19,9 @@ class EventResource extends JsonResource
             'name'=>$this->name,
             'longitude'=>$this->longitude,
             'latitude'=>$this->latitude,
-            'event_date'=>$this->event_date,
+           'event_date'=>$this->event_date,
             'created_at'=>$this->created_at,
-            'playlists'=>$this->playlists
+            'playlists'=>$this->playlists()
         ];
     }
 }

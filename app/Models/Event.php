@@ -25,6 +25,6 @@ class Event extends Model
     ];
 
     public function playlists(){
-        return $this->belongsToMany(Playlists::class,'event_playlists','playlist_id','event_id')->with(['songs']);
+        return $this->belongsToMany(Playlists::class,'event_playlists','event_id','playlist_id')->with(['songs']);
     }
 }

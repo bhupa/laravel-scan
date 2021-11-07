@@ -43,6 +43,6 @@ class User extends Authenticatable
     ];
 
     public function playlists(){
-        return $this->hasMany(PlayLists::class);
+        return $this->belongsToMany(PlayLists::class, 'user_playlists','user_id','playlist_id');
     }
 }

@@ -19,9 +19,32 @@ class HomeController extends BaseController
         $lang = '85.157568';
 
         $events = $this->event->getEvents($lat ,$lang);
-        return $this->success([
-            'message' => 'Event Lists',
-            'data' => $events
-        ]);
+        $data = [
+        'events'=>$events,
+        'user_play_lists'=>auth()->user()->playlists
+        ];
+        return $this->success($data,'Lists of playlists and events');
+    }
+
+    public function eventPercentage(Request $request){
+
+        $data = $request->except('_token');
+
+       
+        $playlistId = auth()->user()->playlists()->pluck('playlist_id')->toArray();
+        $counts = count($playlistId );
+        $event = $this->event->whereIn('id',$request->event_id)->get();
+       
+        $events = $event->map(function($item)use($counts, $playlistId ){
+           
+            $playId = $item->playlists->pluck('id')->toArray();
+            $count = array_diff( $playlistId,$playId);
+            $data = $item;
+            $data['percentage'] =(($counts - count($count))*100)/$counts;
+            return  $data;
+        });
+        
+
+        return $this->success($events,'Percentage of the event that match with playlists');
     }
 }

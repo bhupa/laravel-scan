@@ -2,19 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\Song\SongStoreRequest;
-use App\Http\Requests\Song\SongUpdateRequest;
-use App\Http\Resources\SongResource;
-use App\Models\Song;
+use App\Http\Resources\PlayListsResource;
 use Illuminate\Http\Request;
-use App\Repositories\SongRepository;
+use App\Repositories\UserPlayListsRepository;
 
-class SongController extends BaseController
+
+class UserPlaylistsController extends BaseController
 {
 
-    public function __construct(SongRepository $song)
+    Public function __construct(UserPlayListsRepository $userPlayLists)
     {
-        $this->song = $song;
+        $this->userPlayLists = $userPlayLists;
     }
     /**
      * Display a listing of the resource.
@@ -42,15 +40,11 @@ class SongController extends BaseController
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(SongStoreRequest $request)
+    public function store(Request $request)
     {
-        $data = $request->except('_token');
-        if($song = $this->song->create($data)){
-            $output = new SongResource($song);
-            return $this->success($output, 'Song added Successfully ');
-         }
-
-         return $this->error('Opps Something went wrong pls check the form ');
+        auth()->user()->playlists()->sync($request->playlist_id);
+        $output = PlayListsResource::collection(auth()->user()->playlists);
+        return $this->success($output, 'User playlists added Successfully ');
     }
 
     /**
@@ -82,16 +76,9 @@ class SongController extends BaseController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(SongUpdateRequest $request, Song $song)
+    public function update(Request $request, $id)
     {
-        
-        $data = $request->except('_token');
-        if($song->update($data)){
-            $output = new SongResource($song);
-            return $this->success($output,'Song update Successfully ');
-         }
-
-         return $this->error('Opps Something went wrong pls check the form ');
+        //
     }
 
     /**
@@ -100,10 +87,8 @@ class SongController extends BaseController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Song $song)
+    public function destroy($id)
     {
-        $song->delete();
-        $output = new SongResource($song);
-            return $this->success($output,'Song deleted Successfully');
+        //
     }
 }

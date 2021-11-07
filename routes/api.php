@@ -32,6 +32,8 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::resource('song','SongController');
     Route::resource('event','EventController');
     Route::get('/home','HomeController@index');
+    Route::post('/match-event','HomeController@eventPercentage');
+    Route::resource('user-playlists', 'UserPlaylistsController');
 });
 
 
